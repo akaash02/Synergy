@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, ScrollView, Dimensions, Alert, Image } from "react-native";
-
+import { createUser } from "../../lib/appwrite";
 import { images } from "../../constants";
 
 import { CustomButton, FormField } from "../../components";
@@ -20,6 +20,8 @@ const SignUp = () => {
   });
 
   const submit = async () => {
+    createUser();
+    
     if (form.username === "" || form.email === "" || form.password === "") {
       Alert.alert("Error", "Please fill in all fields");
     }
@@ -30,7 +32,7 @@ const SignUp = () => {
       setUser(result);
       setIsLogged(true);
 
-      router.replace("/home");
+      router.replace("/(tabs)/home");
     } catch (error) {
       Alert.alert("Error", error.message);
     } finally {
