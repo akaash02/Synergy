@@ -18,6 +18,9 @@ module.exports = {
         gray: {
           100: "#CDCDE0",
         },
+        rose: {
+          400: "#fb7185",
+        },
       },
       fontFamily: {
         pthin: ["Poppins-Thin", "sans-serif"],
@@ -29,6 +32,12 @@ module.exports = {
         pbold: ["Poppins-Bold", "sans-serif"],
         pextrabold: ["Poppins-ExtraBold", "sans-serif"],
         pblack: ["Poppins-Black", "sans-serif"],
+      },
+      overflow: {
+        'auto': 'auto',
+        'hidden': 'hidden',
+        'visible': 'visible',
+        'scroll': 'scroll',
       },
     },
   },
