@@ -20,6 +20,7 @@ module.exports = {
         },
         rose: {
           400: "#fb7185",
+        },
       },
       fontFamily: {
         pthin: ["Poppins-Thin", "sans-serif"],
