@@ -5,9 +5,9 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-3xl">Hi Dhanya!</Text>
+      <Text className="text-3xl font-pblack">Hi Dhanya</Text>
       <StatusBar style="auto" />
-      <Link href="/profile" style={{color: 'blue'}}> Profile</Link>
+      <Link href="/home" style={{color: 'blue'}}> Home</Link>
     </View>
   );
 }
