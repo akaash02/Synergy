@@ -82,7 +82,7 @@ const SignIn = () => {
               href="/(auth)/sign-up"
               className="text-lg font-psemibold text-secondary"
             >
-              Signup
+              Sign up here!
             </Link>
           </View>
 
