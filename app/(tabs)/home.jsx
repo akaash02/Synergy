@@ -1,130 +1,100 @@
-import React, { useState } from 'react';
-import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
-import NewAnnouncementModal from '../NewAnnouncementModal';
-import ConfirmationModal from '../ConfirmationModal'; 
+import { useState, useEffect } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FlatList, Image, RefreshControl, Text, View } from "react-native";
+import { router } from "expo-router";
+import { images } from "../../constants";
+import useAppwrite from "../../lib/useAppwrite";
+import { getUsername, getIncompleteTasks } from "../../lib/appwrite";
+import { EmptyState, SearchInput, Trending, TaskCard, CustomButton } from "../../components";
 
 const Home = () => {
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [newAnnouncement, setNewAnnouncement] = useState('');
-  const [title, setTitle] = useState('');
-  const [announcements, setAnnouncements] = useState([]);
-  const [priority, setPriority] = useState('Low');
-  
-  // Track selected task and confirmation modal visibility
-  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
-  const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
+  const [username, setUsername] = useState('');
+  const [tasks, setTasks] = useState([]); // State to store incomplete tasks
+  const [refreshing, setRefreshing] = useState(false);
 
-  // Handle adding a new task
-  const handleNewAnnouncement = () => {
-    if (title.trim() !== '' && newAnnouncement.trim() !== '') {
-      setAnnouncements((prev) => [
-        ...prev,
-        { title: title.trim(), content: newAnnouncement.trim(), priority: priority, completed: false },
-      ]);
-      setTitle('');
-      setNewAnnouncement('');
-      setPriority('Low');
-      setModalVisible(false);
+  // Fetch username and tasks
+  const fetchData = async () => {
+    const fetchedUsername = await getUsername(); // Get username
+    if (fetchedUsername) {
+      setUsername(fetchedUsername);
+    } else {
+      setUsername('Guest');
     }
+
+    const fetchedTasks = await getIncompleteTasks(); // Get incomplete tasks
+    setTasks(fetchedTasks); // Store tasks in state
   };
 
-  // Handle marking the task as completed
-  const markAsCompleted = () => {
-    const updatedAnnouncements = announcements.filter((announcement) => announcement !== selectedAnnouncement);
-    setAnnouncements(updatedAnnouncements);  
-    setConfirmationModalVisible(false);    
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Refresh handler
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchData(); // Refetch username and tasks
+    setRefreshing(false);
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#161622', alignItems: 'center', paddingHorizontal: 16 }}>
-      <Text style={{ color: '#FF9C01', fontSize: 24, fontWeight: '600', marginTop: 40, textAlign: 'center' }}>
-        Welcome Back, {'\n'}
-      </Text>
+    <SafeAreaView className="bg-primary">
+      <FlatList
+        keyExtractor={(item) => item.$id}
+        data={tasks} // Pass tasks data to FlatList
+        renderItem={({ item }) => (
+          <TaskCard
+            title={item.Title || "Untitled Task"}
+            creator={item.Creator || "Unknown"}
+            description={item.Description || "No description available"}
+            dueDate={item.DueDate || "No due date"}
+            priority={item.Priority || 0}
+/>
 
-      <View style={{ paddingBottom: 8 }}>
-        <Text style={{ color: '#FF9C01', fontSize: 32, fontWeight: '500', textAlign: 'center' }}>Jia Min</Text>
-      </View>
+        )}
+        ListHeaderComponent={() => (
+          <View className="flex- my-11 px-4 space-y-1">
+            <View className="flex justify-between items-start flex-row mb-6">
+              <View>
+                <Text className="font-pmedium text-sm text-gray-100">Welcome Back</Text>
+                <Text className="text-2xl font-psemibold text-white">
+                  {username ? username : 'Loading...'}
+                </Text>
+              </View>
 
-      <View style={{ width: '90%', backgroundColor: '#e0e0e0', borderRadius: 10, padding: 16, marginTop: 40 }}>
-        <View style={{ backgroundColor: '#FF9C01', padding: 8, borderRadius: 5, marginBottom: 16 }}>
-          <Text style={{ color: '#000', fontSize: 20, fontWeight: '700' }}>Tasks</Text>
-        </View>
+              <View className="mt-1.5">
+                <Image
+                  source={images.logoSmall}
+                  className="w-9 h-10"
+                  resizeMode="contain"
+                />
+              </View>
+            </View>
 
-        <ScrollView style={{ height: 240 }} contentContainerStyle={{ paddingBottom: 16 }}>
-          {announcements.length > 0 ? (
-            announcements.map((announcement, index) => (
-              <TouchableOpacity
-                key={index}
-                onPress={() => {
-                  setSelectedAnnouncement(announcement); 
-                  setConfirmationModalVisible(true); 
-                }}
-                style={{
-                  marginBottom: 16,
-                  backgroundColor: announcement.completed ? '#d3ffd3' : '#fff',
-                  padding: 10,
-                  borderRadius: 5,
-                }}
-              >
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <Text style={{ color: '#000', fontSize: 18, fontWeight: '700' }}>{announcement.title}</Text>
-                  <Text
-                    style={{
-                      color: announcement.priority === 'High' ? '#FF0000' : announcement.priority === 'Medium' ? '#FFA500' : '#008000',
-                      fontSize: 14,
-                      fontWeight: '700',
-                    }}
-                  >
-                    {announcement.priority}
-                  </Text>
-                </View>
-                <Text style={{ color: '#000', fontSize: 16 }}>{announcement.content}</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={{ color: '#aaa', fontSize: 16, textAlign: 'center' }}>
-              No tasks for now
-            </Text>
-          )}
-        </ScrollView>
-      </View>
+            <SearchInput />
 
-      <TouchableOpacity
-        style={{
-          width: '90%',
-          backgroundColor: '#FF9C01',
-          paddingVertical: 12,
-          marginTop: 16,
-          borderRadius: 10,
-          alignItems: 'center',
-        }}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={{ color: '#fff', fontSize: 18, fontWeight: '700' }}>New Task</Text>
-      </TouchableOpacity>
-
-      <NewAnnouncementModal
-        isVisible={isModalVisible}
-        onCancel={() => setModalVisible(false)}
-        onSubmit={handleNewAnnouncement}
-        title={title}
-        setTitle={setTitle}
-        newAnnouncement={newAnnouncement}
-        setNewAnnouncement={setNewAnnouncement}
-        priority={priority}
-        setPriority={setPriority}
+            <View className="w-full flex-1 pt-5 pb-8">
+              <Text className="text-lg font-pregular text-gray-100 mb-3">Your Tasks</Text>
+            </View>
+          </View>
+        )}
+        ListEmptyComponent={() => (
+          <EmptyState
+            title="No pending tasks"
+            subtitle="Create a task to get started"
+          />
+        )}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
-
-      {/* Confirmation modal */}
-      <ConfirmationModal
-        isVisible={isConfirmationModalVisible}
-        onClose={() => setConfirmationModalVisible(false)}
-        onConfirm={markAsCompleted}
-        message="Mark task as completed?"
+      <CustomButton
+        title="Create a task"
+        handlePress={() => router.push("/create")}
+        containerStyles="w-full my-5"
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
 export default Home;
-
