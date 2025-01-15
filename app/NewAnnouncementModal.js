@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';W
 
 const NewAnnouncementModal = ({
   isVisible,
@@ -7,12 +8,21 @@ const NewAnnouncementModal = ({
   onSubmit,
   newAnnouncement,
   setNewAnnouncement,
+  title,
+  setTitle,
+  priority,
+  setPriority,
+  deadline,
+  setDeadline,
 }) => {
   if (!isVisible) return null;
 
 
   const handleCancel = () => {
+    setTitle('');
     setNewAnnouncement('');
+    setPriority('Low');
+    setDeadline(new Date());
     onCancel();
   }
 
@@ -31,7 +41,7 @@ const NewAnnouncementModal = ({
             style={{
               position: 'absolute',
               top: '30%',
-              width: '100%',
+              width: '90%',
               backgroundColor: '#161622',
               borderRadius: 10,
               padding: 16,
@@ -43,6 +53,26 @@ const NewAnnouncementModal = ({
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 8, color: '#FF9C01' }}>New Announcement</Text>
+
+            {/*Title*/}
+
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 5,
+                padding: 8,
+                marginBottom: 16,
+                fontSize: 16,
+                backgroundColor: '#e0e0e0',
+              }}
+              placeholder="Title"
+              value={title}
+              onChangeText={setTitle}
+            />
+
+            {/*Announcement Content*/}
+
             <TextInput
               style={{
                 borderWidth: 1,
@@ -61,8 +91,40 @@ const NewAnnouncementModal = ({
             />
 
             {/*Handle priority selection here*/}
+
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 5,
+                marginBottom: 16,
+                backgroundColor: '#e0e0e0',
+              }}
+            >
+              <Picker
+                selectedValue={priority}
+                onValueChange={(itemValue) => setPriority(itemValue)}
+              >
+                <Picker.Item label="Low" value="Low" />
+                <Picker.Item label="Medium" value="Medium" />
+                <Picker.Item label="High" value="High" />
+              </Picker>
+            </View>
+
             {/*Handle deadline selection here*/}
 
+            <DateTimePicker
+              value={deadline}
+              mode="date"
+              display="default"
+              onChange={(event, selectedDate) => {
+                const currentDate = selectedDate || deadline;
+                setDeadline(currentDate);
+              }}
+              style={{ marginBottom: 16 }}
+            />
+
+            {/*Action Buttons*/}
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <TouchableOpacity
@@ -85,7 +147,7 @@ const NewAnnouncementModal = ({
                 }}
                 onPress={onSubmit}
               >
-                <Text style={{ color: '#fff', fontSize: 16 }}>Submit</Text>
+                <Text style={{ color: '#fff', fontSize: 16 }}>Publish</Text>
               </TouchableOpacity>
             </View>
           </View>
