@@ -22,7 +22,7 @@ const NewAnnouncementModal = ({
         <View
           style={{
             flex: 1,
-            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black overlay
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // background blur
             justifyContent: 'center',
             alignItems: 'center',
           }}
@@ -31,7 +31,7 @@ const NewAnnouncementModal = ({
             style={{
               position: 'absolute',
               top: '30%',
-              width: '90%',
+              width: '100%',
               backgroundColor: '#161622',
               borderRadius: 10,
               padding: 16,
@@ -59,6 +59,11 @@ const NewAnnouncementModal = ({
               multiline
               number of lines={4}
             />
+
+            {/*Handle priority selection here*/}
+            {/*Handle deadline selection here*/}
+
+
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <TouchableOpacity
                 style={{

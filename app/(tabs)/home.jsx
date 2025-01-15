@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import NewAnnouncementModal from '../NewAnnouncementModal';
+import { Client, Account, ID } from 'react-native-appwrite';
+
+const client = new Client() 
+    .setProject('67865861001656dcaf55')
+    .setPlatform('com.akaash.synergy');
+
 
 const Home = () => {
 
