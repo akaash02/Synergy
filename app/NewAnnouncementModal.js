@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';W
+import DateTimePicker from '@react-native-community/datetimepicker';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const NewAnnouncementModal = ({
   isVisible,
@@ -12,17 +13,19 @@ const NewAnnouncementModal = ({
   setTitle,
   priority,
   setPriority,
-  deadline,
-  setDeadline,
+  //deadline,
+  //setDeadline,
 }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   if (!isVisible) return null;
 
 
   const handleCancel = () => {
     setTitle('');
     setNewAnnouncement('');
-    setPriority('Low');
-    setDeadline(new Date());
+    setPriority('Select Priority');
+    //setDeadline(new Date());
     onCancel();
   }
 
@@ -52,7 +55,7 @@ const NewAnnouncementModal = ({
               elevation: 5,
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 8, color: '#FF9C01' }}>New Announcement</Text>
+            <Text style={{ fontSize: 20, fontWeight: '700', marginBottom: 8, color: '#FF9C01' }}>New Task</Text>
 
             {/*Title*/}
 
@@ -83,11 +86,28 @@ const NewAnnouncementModal = ({
                 fontSize: 16,
                 backgroundColor: '#e0e0e0',
               }}
-              placeholder="Write your announcement here"
+              placeholder="Task Description"
               value={newAnnouncement}
               onChangeText={setNewAnnouncement}
               multiline
               number of lines={4}
+            />
+
+            {/*Choose personnel to issue task to*/}
+
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: '#e0e0e0',
+                borderRadius: 5,
+                padding: 8,
+                marginBottom: 16,
+                fontSize: 16,
+                backgroundColor: '#e0e0e0',
+              }}
+              placeholder="Enter username or email"
+              //value={newAnnouncement}
+              //onChangeText={setNewAnnouncement}
             />
 
             {/*Handle priority selection here*/}
@@ -97,22 +117,39 @@ const NewAnnouncementModal = ({
                 borderWidth: 1,
                 borderColor: '#e0e0e0',
                 borderRadius: 5,
-                marginBottom: 16,
+                marginBottom: 10,
                 backgroundColor: '#e0e0e0',
               }}
             >
-              <Picker
-                selectedValue={priority}
-                onValueChange={(itemValue) => setPriority(itemValue)}
-              >
-                <Picker.Item label="Low" value="Low" />
-                <Picker.Item label="Medium" value="Medium" />
-                <Picker.Item label="High" value="High" />
-              </Picker>
+              <DropDownPicker
+                open={isDropdownOpen}
+                value={priority}
+                items={[
+                  { label: 'Low', value: 'Low' },
+                  { label: 'Medium', value: 'Medium' },
+                  { label: 'High', value: 'High' },
+                ]}
+                setOpen={setIsDropdownOpen}
+                setValue={setPriority}
+                placeholder="Select Priority"
+                style={{
+                  borderWidth: 1,
+                  borderColor: '#e0e0e0',
+                  borderRadius: 5,
+                  backgroundColor: '#e0e0e0',
+                  marginBottom: 16,
+                }}
+                dropDownContainerStyle={{
+                  backgroundColor: '#e0e0e0',
+                  borderWidth: 1,
+                  borderColor: '#e0e0e0',
+                  borderRadius: 5,
+                }}
+              />
             </View>
 
             {/*Handle deadline selection here*/}
-
+            {/*
             <DateTimePicker
               value={deadline}
               mode="date"
@@ -123,7 +160,7 @@ const NewAnnouncementModal = ({
               }}
               style={{ marginBottom: 16 }}
             />
-
+*/}
             {/*Action Buttons*/}
 
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>

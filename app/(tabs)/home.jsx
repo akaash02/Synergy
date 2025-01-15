@@ -1,43 +1,39 @@
 import React, { useState } from 'react';
 import { View, ScrollView, TouchableOpacity, Text } from 'react-native';
 import NewAnnouncementModal from '../NewAnnouncementModal';
-import { Client, Account, ID } from 'react-native-appwrite';
-
-const client = new Client() 
-    .setProject('67865861001656dcaf55')
-    .setPlatform('com.akaash.synergy');
-
+import ConfirmationModal from '../ConfirmationModal'; 
 
 const Home = () => {
-
-  {/*States*/ }
-
-
-  // Track the visibility of the modal
   const [isModalVisible, setModalVisible] = useState(false);
-
-  // Track the content of the new announcement
   const [newAnnouncement, setNewAnnouncement] = useState('');
-
-  // Store the list of announcements
+  const [title, setTitle] = useState('');
   const [announcements, setAnnouncements] = useState([]);
+  const [priority, setPriority] = useState('Low');
+  
+  // Track selected task and confirmation modal visibility
+  const [selectedAnnouncement, setSelectedAnnouncement] = useState(null);
+  const [isConfirmationModalVisible, setConfirmationModalVisible] = useState(false);
 
-
-  {/*Functions*/ }
-
-
-  // Handle adding a new announcement
+  // Handle adding a new task
   const handleNewAnnouncement = () => {
-    if (newAnnouncement.trim() !== '') {
-      setAnnouncements((prev) => [...prev, newAnnouncement]); // Add the new announcement to the list
-      setNewAnnouncement(''); // Clear input
-      setModalVisible(false); // Close modal
+    if (title.trim() !== '' && newAnnouncement.trim() !== '') {
+      setAnnouncements((prev) => [
+        ...prev,
+        { title: title.trim(), content: newAnnouncement.trim(), priority: priority, completed: false },
+      ]);
+      setTitle('');
+      setNewAnnouncement('');
+      setPriority('Low');
+      setModalVisible(false);
     }
   };
 
-
-  {/*Return logic*/ }
-
+  // Handle marking the task as completed
+  const markAsCompleted = () => {
+    const updatedAnnouncements = announcements.filter((announcement) => announcement !== selectedAnnouncement);
+    setAnnouncements(updatedAnnouncements);  
+    setConfirmationModalVisible(false);    
+  };
 
   return (
     <View style={{ flex: 1, backgroundColor: '#161622', alignItems: 'center', paddingHorizontal: 16 }}>
@@ -51,24 +47,43 @@ const Home = () => {
 
       <View style={{ width: '90%', backgroundColor: '#e0e0e0', borderRadius: 10, padding: 16, marginTop: 40 }}>
         <View style={{ backgroundColor: '#FF9C01', padding: 8, borderRadius: 5, marginBottom: 16 }}>
-          <Text style={{ color: '#000', fontSize: 20, fontWeight: '700' }}>Announcements</Text>
+          <Text style={{ color: '#000', fontSize: 20, fontWeight: '700' }}>Tasks</Text>
         </View>
 
-        <ScrollView
-          style={{ height: 240 }} // Set fixed height for the announcements box
-          contentContainerStyle={{ paddingBottom: 16 }}
-        >
+        <ScrollView style={{ height: 240 }} contentContainerStyle={{ paddingBottom: 16 }}>
           {announcements.length > 0 ? (
             announcements.map((announcement, index) => (
-              <View key={index}>
-                <Text style={{ color: '#000', fontSize: 16, marginBottom: 16 }}>{announcement}</Text>
-                <View style={{ borderBottomWidth: 1, borderColor: '#FF9C01', marginBottom: 16 }} />
-              </View>
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setSelectedAnnouncement(announcement); 
+                  setConfirmationModalVisible(true); 
+                }}
+                style={{
+                  marginBottom: 16,
+                  backgroundColor: announcement.completed ? '#d3ffd3' : '#fff',
+                  padding: 10,
+                  borderRadius: 5,
+                }}
+              >
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <Text style={{ color: '#000', fontSize: 18, fontWeight: '700' }}>{announcement.title}</Text>
+                  <Text
+                    style={{
+                      color: announcement.priority === 'High' ? '#FF0000' : announcement.priority === 'Medium' ? '#FFA500' : '#008000',
+                      fontSize: 14,
+                      fontWeight: '700',
+                    }}
+                  >
+                    {announcement.priority}
+                  </Text>
+                </View>
+                <Text style={{ color: '#000', fontSize: 16 }}>{announcement.content}</Text>
+              </TouchableOpacity>
             ))
           ) : (
-            // Placeholder text when no announcements exist
             <Text style={{ color: '#aaa', fontSize: 16, textAlign: 'center' }}>
-              No announcements for now
+              No tasks for now
             </Text>
           )}
         </ScrollView>
@@ -85,20 +100,31 @@ const Home = () => {
         }}
         onPress={() => setModalVisible(true)}
       >
-        <Text style={{ color: '#fff', fontSize: 18, fontWeight: '700' }}>New Announcement</Text>
+        <Text style={{ color: '#fff', fontSize: 18, fontWeight: '700' }}>New Task</Text>
       </TouchableOpacity>
 
       <NewAnnouncementModal
-        isVisible={isModalVisible} 
-        onCancel={() => setModalVisible(false)} 
-        onSubmit={handleNewAnnouncement} // Add new announcement
-        newAnnouncement={newAnnouncement} 
-        setNewAnnouncement={setNewAnnouncement} 
+        isVisible={isModalVisible}
+        onCancel={() => setModalVisible(false)}
+        onSubmit={handleNewAnnouncement}
+        title={title}
+        setTitle={setTitle}
+        newAnnouncement={newAnnouncement}
+        setNewAnnouncement={setNewAnnouncement}
+        priority={priority}
+        setPriority={setPriority}
+      />
+
+      {/* Confirmation modal */}
+      <ConfirmationModal
+        isVisible={isConfirmationModalVisible}
+        onClose={() => setConfirmationModalVisible(false)}
+        onConfirm={markAsCompleted}
+        message="Mark task as completed?"
       />
     </View>
   );
 };
 
 export default Home;
-
 
