@@ -53,7 +53,7 @@ const SignUp = () => {
           />
 
           <Text className="text-2xl font-semibold text-white mt-10 font-psemibold">
-            Sign Up to Synergy
+            Sign Up to Aora
           </Text>
 
           <FormField
