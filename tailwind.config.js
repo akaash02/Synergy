@@ -30,6 +30,12 @@ module.exports = {
         pextrabold: ["Poppins-ExtraBold", "sans-serif"],
         pblack: ["Poppins-Black", "sans-serif"],
       },
+      overflow: {
+        'auto': 'auto',
+        'hidden': 'hidden',
+        'visible': 'visible',
+        'scroll': 'scroll',
+      },
     },
   },
   plugins: [],
