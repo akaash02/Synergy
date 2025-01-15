@@ -31,16 +31,16 @@ const ConfirmationModal = ({ isVisible, onClose, onConfirm, message }) => {
           </Text>
           <View
             style={{
-              flexDirection: 'row', // Align buttons horizontally
+              flexDirection: 'row', 
               marginTop: 20,
-              width: '100%', // Ensure buttons take full width
-              justifyContent: 'space-between', // Space out buttons
+              width: '100%', 
+              justifyContent: 'space-between', 
             }}
           >
             <TouchableOpacity onPress={onClose} style={{ backgroundColor: 'black', padding: 10, borderRadius: 5 }}>
               <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>Cancel</Text>
             </TouchableOpacity>
-            
+
             <TouchableOpacity onPress={onConfirm} style={{ backgroundColor: '#FF9C01', padding: 10, borderRadius: 5 }}>
               <Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>Yes</Text>
             </TouchableOpacity>

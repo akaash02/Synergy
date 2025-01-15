@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Keyboard, TouchableOpacity, TouchableWithoutFeedback } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
+import TaskModal from './TaskModal';
+import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 const NewAnnouncementModal = ({
   isVisible,
@@ -17,6 +20,8 @@ const NewAnnouncementModal = ({
   //setDeadline,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isTaskModalVisible, setTaskModalVisible] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState(['User1', 'User2', 'User3']);
 
   if (!isVisible) return null;
 
@@ -27,7 +32,11 @@ const NewAnnouncementModal = ({
     setPriority('Select Priority');
     //setDeadline(new Date());
     onCancel();
-  }
+  };
+
+  const toggleTaskModal = () => {
+    setTaskModalVisible(!isTaskModalVisible);
+  };
 
   return (
     <View style={{ flex: 1, position: 'absolute', width: '100%', height: '100%' }}>
@@ -95,20 +104,24 @@ const NewAnnouncementModal = ({
 
             {/*Choose personnel to issue task to*/}
 
-            <TextInput
-              style={{
-                borderWidth: 1,
-                borderColor: '#e0e0e0',
-                borderRadius: 5,
-                padding: 8,
-                marginBottom: 16,
-                fontSize: 16,
-                backgroundColor: '#e0e0e0',
-              }}
-              placeholder="Enter username or email"
-              //value={newAnnouncement}
-              //onChangeText={setNewAnnouncement}
-            />
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16, width: '100%' }}>
+              <TextInput
+                style={{
+                  flex: 1, // Take up remaining space
+                  borderWidth: 1,
+                  borderColor: '#e0e0e0',
+                  borderRadius: 5,
+                  padding: 8,
+                  backgroundColor: '#e0e0e0',
+                }}
+                placeholder="Enter username or email"
+              />
+              <TouchableOpacity onPress={toggleTaskModal} style={{ marginLeft: 8 }}>
+                <Icon name="user" size={24} color="#FF9C01" />
+              </TouchableOpacity>
+              <Text style={{ color: '#FF9C01', marginLeft: 5 }}>{selectedUsers.length}</Text>
+
+            </View>
 
             {/*Handle priority selection here*/}
 
@@ -137,13 +150,13 @@ const NewAnnouncementModal = ({
                   borderColor: '#e0e0e0',
                   borderRadius: 5,
                   backgroundColor: '#e0e0e0',
-                  marginBottom: 16,
+                  marginBottom: 16
                 }}
                 dropDownContainerStyle={{
                   backgroundColor: '#e0e0e0',
                   borderWidth: 1,
                   borderColor: '#e0e0e0',
-                  borderRadius: 5,
+                  borderRadius: 5
                 }}
               />
             </View>
@@ -190,6 +203,13 @@ const NewAnnouncementModal = ({
           </View>
         </View>
       </TouchableWithoutFeedback>
+
+      {/* TaskModal */}
+      <TaskModal
+        isVisible={isTaskModalVisible}
+        onClose={toggleTaskModal}
+        selectedUsers={selectedUsers}
+      />
     </View>
   );
 };
