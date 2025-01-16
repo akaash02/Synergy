@@ -3,17 +3,46 @@ import {  ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CustomButton, FormField } from '../components';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { createMeeting } from '../lib/appwrite';
+import { createMeeting, searchUsersByUsername } from '../lib/appwrite';
 
 const CreateMeetings = () => {
   const [uploading, setUploading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [assignedUsers, setAssignedUsers] = useState([]);
   const [form, setForm] = useState({
     title: "",
     description: "",
     dueDate: new Date(),
+    attendees: [], // <-- Correct key for meetings
   });
+  
   const [isDatePickerVisible, setDatePickerVisible] = useState(false); // For showing/hiding the modal
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      Alert.alert("Please enter a username to search");
+      return;
+    }
+  
+    try {
+      const users = await searchUsersByUsername(searchQuery);
+      setSearchResults(users);
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  const handleAssignUser = (user) => {
+    setForm((prevForm) => ({
+      ...prevForm,
+      attendees: [...prevForm.attendees, user.accountId], // Update attendees
+    }));
+  
+    setAssignedUsers((prevUsers) => [...prevUsers, user]); // Add selected user to the list of assigned users
+  };
+  
+  
   const handleDateConfirm = (date) => {
     setForm({ ...form, dueDate: date });
     setDatePickerVisible(false); // Hide the date picker modal after selecting a date
@@ -27,24 +56,24 @@ const CreateMeetings = () => {
     setUploading(true);
   
     try {
-      // Convert due date to the correct format for Appwrite (ISO 8601 format)
       const dueDate = form.dueDate.toISOString();
+      // Ensure you're passing attendees correctly
+      await createMeeting(form.title, form.description, dueDate, form.attendees); 
   
-      // Directly pass the priority as an integer
-      await createMeeting(form.title, form.description,  form.dueDate);
-  
-      Alert.alert("Success", "Task created successfully!");
+      Alert.alert("Success", "Meeting created successfully!");
     } catch (error) {
-      Alert.alert("Error", "An error occurred while creating the task.");
+      Alert.alert("Error", "An error occurred while creating the meeting.");
     } finally {
       setUploading(false);
       setForm({
         title: "",
         description: "",
         dueDate: new Date(),
+        attendees: [],
       });
     }
   };
+  
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
@@ -76,7 +105,30 @@ const CreateMeetings = () => {
             </View>
           </TouchableOpacity>
         </View>
-  
+        <FormField
+                  title="Assign Users"
+                  value={searchQuery}
+                  placeholder="Search users by username"
+                  handleChangeText={(e) => setSearchQuery(e)}
+                  onSubmitEditing={handleSearch}
+                  otherStyles="mt-7"
+                />
+        
+                <View className="mt-4">
+                  {searchResults.map((user) => (
+                    <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
+                      <Text className="text-gray-100">{user.username}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+        
+                <View className="mt-4">
+                  {assignedUsers.map((user) => (
+                    <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center">
+                      <Text className="text-gray-800">{user.username}</Text>
+                    </View>
+                  ))}
+                </View>
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
           mode="datetime"

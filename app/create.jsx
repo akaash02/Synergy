@@ -77,7 +77,6 @@ const Create = () => {
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
         <Text className="text-2xl text-white font-psemibold">Create Task</Text>
-
         <FormField
           title="Task Title"
           value={form.title}
@@ -85,7 +84,6 @@ const Create = () => {
           handleChangeText={(e) => setForm({ ...form, title: e })}
           otherStyles="mt-10"
         />
-
         <FormField
           title="Description"
           value={form.description}
@@ -93,8 +91,6 @@ const Create = () => {
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
         />
-
-        {/* Priority Buttons */}
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">Priority</Text>
           <View className="flex-row gap-4">
@@ -107,7 +103,7 @@ const Create = () => {
                 borderRadius: 8,
               }}
             >
-              <Text className="text-white">Low</Text>
+            <Text className="text-white">Low</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setForm({ ...form, priority: 2 })}
@@ -133,8 +129,6 @@ const Create = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* User Search */}
         <FormField
           title="Assign Users"
           value={searchQuery}
@@ -159,10 +153,6 @@ const Create = () => {
             </View>
           ))}
         </View>
-
-
-
-        {/* Due Date Picker */}
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">Due Date</Text>
           <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
