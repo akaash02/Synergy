@@ -6,33 +6,12 @@ import { images } from "../../constants";
 import useAppwrite from "../../lib/useAppwrite";
 import { getUsername, getIncompleteTasks } from "../../lib/appwrite";
 import { EmptyState, SearchInput, TaskCard, CustomButton } from "../../components";
-import * as Notifications from "expo-notifications";
+import { requestNotificationPermission, scheduleNotification } from "../Notifications";
 
 const Home = () => {
   const [username, setUsername] = useState('');
   const [tasks, setTasks] = useState([]); // State to store incomplete tasks
   const [refreshing, setRefreshing] = useState(false);
-
-  // Schedule a notification for a specific task
-  const scheduleNotification = async (task) => {
-    const dueDate = new Date(task.DueDate); // Convert dueDate string to Date object
-    const now = new Date();
-
-    // Check if dueDate is in the future
-    if (dueDate > now) {
-      const timeUntilDue = dueDate.getTime() - now.getTime();
-
-      // Schedule the notification
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "Task Reminder",
-          body: `Your task "${task.Title}" is due soon!`,
-          sound: true,
-        },
-        trigger: { seconds: Math.round(timeUntilDue / 1000) },
-      });
-    }
-  };
 
   // Fetch username and tasks
   const fetchData = async () => {
@@ -45,11 +24,31 @@ const Home = () => {
 
     const fetchedTasks = await getIncompleteTasks(); // Get incomplete tasks
     setTasks(fetchedTasks); // Store tasks in state
+
+    // Schedule notifications for tasks
+    fetchedTasks.forEach((task) => {
+      if (task.DueDate) {
+        const dueDate = new Date(task.DueDate); // Parse DueDate into a Date object
+        if (dueDate > new Date()) {
+          scheduleNotification(
+            `Task Reminder: ${task.Title || "Untitled Task"}`,
+            `Due on ${dueDate.toDateString()} at ${dueDate.toLocaleTimeString()}`,
+            dueDate
+          );
+        }
+      }
+    });
   };
 
   // Fetch data on component mount
   useEffect(() => {
-    fetchData();
+    const initialize = async () => {
+      const hasPermission = await requestNotificationPermission();
+      if (hasPermission) {
+        await fetchData();
+      }
+    };
+    initialize();
   }, []);
 
   // Refresh handler
@@ -126,7 +125,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111', // Replace with your "bg-primary" equivalent
+    backgroundColor: '#111',
   },
   content: {
     flex: 1,
@@ -143,12 +142,12 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 14,
-    color: '#aaa', // Replace with "text-gray-100"
+    color: '#aaa',
   },
   usernameText: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#fff', // Replace with "text-white"
+    color: '#fff',
   },
   logo: {
     width: 36,
@@ -159,12 +158,12 @@ const styles = StyleSheet.create({
   },
   tasksTitle: {
     fontSize: 18,
-    color: '#aaa', // Replace with "text-gray-100"
+    color: '#aaa',
     marginBottom: 8,
   },
   fixedButtonContainer: {
     padding: 16,
-    backgroundColor: '#111', // Optional: matches your background color
+    backgroundColor: '#111',
   },
   createTaskButton: {
     width: '100%',
@@ -173,4 +172,3 @@ const styles = StyleSheet.create({
 });
 
 export default Home;
-
