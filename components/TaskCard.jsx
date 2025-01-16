@@ -9,7 +9,7 @@ const TaskCard = ({ title, creator, description, dueDate, priority }) => {
       case 2:
         return "#FFB300"; // Yellow for priority 2
       case 1:
-        return "#1E90FF"; // Blue for priority 1
+        return "#28a745"; // Green for priority 1
       default:
         return "#808080"; // Default gray if no priority
     }
@@ -54,6 +54,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: "#1E1E1E", // Dark background for contrast
     padding: 16,
+    width: '90%', 
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
 });
 

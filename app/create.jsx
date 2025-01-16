@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { SafeAreaView, ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // Import the modal date-time picker
-import { CustomButton, FormField } from "../../components";
-import { createTask } from "../../lib/appwrite"; // Make sure to import the function
+import { CustomButton, FormField } from "../components";
+import { createTask } from "../lib/appwrite"; // Make sure to import the function
 
 const Create = () => {
   const [uploading, setUploading] = useState(false);
@@ -75,7 +75,7 @@ const Create = () => {
             <TouchableOpacity
               onPress={() => setForm({ ...form, priority: 1 })}
               style={{
-                backgroundColor: form.priority === 1 ? "#4CAF50" : "#8E8E8E",
+                backgroundColor: form.priority === 1 ? "green" : "#8E8E8E",
                 paddingVertical: 8,
                 paddingHorizontal: 16,
                 borderRadius: 8,
