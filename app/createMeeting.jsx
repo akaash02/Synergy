@@ -3,17 +3,59 @@ import {  ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CustomButton, FormField } from '../components';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { createMeeting } from '../lib/appwrite';
+import { createMeeting, searchUsersByUsername } from '../lib/appwrite';
 
 const CreateMeetings = () => {
   const [uploading, setUploading] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [assignedUsers, setAssignedUsers] = useState([]);
   const [form, setForm] = useState({
     title: "",
     description: "",
     dueDate: new Date(),
+    attendees: [], // <-- Correct key for meetings
   });
+  
   const [isDatePickerVisible, setDatePickerVisible] = useState(false); // For showing/hiding the modal
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) {
+      Alert.alert("Please enter a username to search");
+      return;
+    }
+  
+    try {
+      const users = await searchUsersByUsername(searchQuery);
+      setSearchResults(users);
+    } catch (error) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
+  const handleAssignUser = (user) => {
+    if (assignedUsers.some(assignedUser => assignedUser.accountId === user.accountId)) {
+          Alert.alert("User already assigned");
+          return;
+        }
+
+    setForm((prevForm) => ({
+      ...prevForm,
+      attendees: [...prevForm.attendees, user.accountId], // Update attendees
+    }));
+  
+    setAssignedUsers((prevUsers) => [...prevUsers, user]); // Add selected user to the list of assigned users
+  };
+
+  const handleRemoveUser = (userToRemove) => {
+    setAssignedUsers((prevUsers) => prevUsers.filter(user => user.accountId !== userToRemove.accountId)); // Remove the user from the list
+    setForm((prevForm) => ({
+      ...prevForm,
+      attendees: prevForm.attendees.filter(accountId => accountId !== userToRemove.accountId), // Remove the user's accountId from the assignees list
+    }));
+  };
+  
+  
   const handleDateConfirm = (date) => {
     setForm({ ...form, dueDate: date });
     setDatePickerVisible(false); // Hide the date picker modal after selecting a date
@@ -27,24 +69,24 @@ const CreateMeetings = () => {
     setUploading(true);
   
     try {
-      // Convert due date to the correct format for Appwrite (ISO 8601 format)
       const dueDate = form.dueDate.toISOString();
+      // Ensure you're passing attendees correctly
+      await createMeeting(form.title, form.description, dueDate, form.attendees); 
   
-      // Directly pass the priority as an integer
-      await createMeeting(form.title, form.description,  form.dueDate);
-  
-      Alert.alert("Success", "Task created successfully!");
+      Alert.alert("Success", "Meeting created successfully!");
     } catch (error) {
-      Alert.alert("Error", "An error occurred while creating the task.");
+      Alert.alert("Error", "An error occurred while creating the meeting.");
     } finally {
       setUploading(false);
       setForm({
         title: "",
         description: "",
         dueDate: new Date(),
+        attendees: [],
       });
     }
   };
+  
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
@@ -76,7 +118,42 @@ const CreateMeetings = () => {
             </View>
           </TouchableOpacity>
         </View>
-  
+
+        {/* User Search */}
+
+        <FormField
+                  title="Assign Users"
+                  value={searchQuery}
+                  placeholder="Search users by username"
+                  handleChangeText={(e) => setSearchQuery(e)}
+                  onSubmitEditing={handleSearch}
+                  otherStyles="mt-7"
+                />
+        
+              {/* Search Results */}
+                      <View className="mt-4">
+                        {searchResults.map((user) => (
+                          <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
+                            <View className="bg-gray-800 p-4 rounded-lg mb-2 flex-row items-center justify-between">
+                              <Text className="text-gray-100">{user.username}</Text>
+                              <Text className="text-gray-400">Tap to Assign</Text>
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+        
+              {/* Assigned Users List */}
+                      <View className="mt-4">
+                        {assignedUsers.map((user) => (
+                          <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center justify-between">
+                            <Text className="text-gray-800">{user.username}</Text>
+                            <TouchableOpacity onPress={() => handleRemoveUser(user)}>
+                              <Text className="text-red-600">Remove</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ))}
+                      </View>
+
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
           mode="datetime"
