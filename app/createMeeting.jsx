@@ -67,7 +67,7 @@ const CreateMeetings = () => {
           otherStyles="mt-7"
         />
         <View className="mt-7 space-y-2">
-          <Text className="text-base text-gray-100 font-pmedium">Due Date</Text>
+          <Text className="text-base text-gray-100 font-pmedium">Date</Text>
           <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
             <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 flex justify-center items-center">
               <Text className="text-gray-100 font-pmedium">
