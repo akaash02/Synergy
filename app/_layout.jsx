@@ -44,12 +44,10 @@ const RootLayout = () => {
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
         <Stack.Screen name="createMeeting" options={{ headerShown: false}} />
-        <Stack.Screen name="create" options={{ headerShadow: false}} />
+        <Stack.Screen name="create" options={{ headerShown: false}} />
       </Stack>
     </GlobalProvider>
   )
 }
 
 export default RootLayout
-
-const styles = StyleSheet.create({})
