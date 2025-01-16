@@ -33,6 +33,10 @@ const Create = () => {
   };
   
   const handleAssignUser = (user) => {
+    if (assignedUsers.some(assignedUser => assignedUser.accountId === user.accountId)) {
+      Alert.alert("User already assigned");
+      return;
+    }
     setForm((prevForm) => ({
       ...prevForm,
       assignees: [...prevForm.assignees, user.accountId], // Add selected user's accountId to assignees
@@ -40,13 +44,19 @@ const Create = () => {
   
     setAssignedUsers((prevUsers) => [...prevUsers, user]); // Add selected user to the list of assigned users
   };
-  
+
+  const handleRemoveUser = (userToRemove) => {
+    setAssignedUsers((prevUsers) => prevUsers.filter(user => user.accountId !== userToRemove.accountId)); // Remove the user from the list
+    setForm((prevForm) => ({
+      ...prevForm,
+      assignees: prevForm.assignees.filter(accountId => accountId !== userToRemove.accountId), // Remove the user's accountId from the assignees list
+    }));
+  };
 
   const handleDateConfirm = (date) => {
     setForm({ ...form, dueDate: date });
     setDatePickerVisible(false); // Hide the date picker modal after selecting a date
   };
-  
 
   const handleCreateTask = async () => {
     if (!form.title || !form.description) {
@@ -77,6 +87,7 @@ const Create = () => {
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
         <Text className="text-2xl text-white font-psemibold">Create Task</Text>
+
         <FormField
           title="Task Title"
           value={form.title}
@@ -84,6 +95,7 @@ const Create = () => {
           handleChangeText={(e) => setForm({ ...form, title: e })}
           otherStyles="mt-10"
         />
+
         <FormField
           title="Description"
           value={form.description}
@@ -91,6 +103,8 @@ const Create = () => {
           handleChangeText={(e) => setForm({ ...form, description: e })}
           otherStyles="mt-7"
         />
+
+        {/* Priority Buttons */}
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">Priority</Text>
           <View className="flex-row gap-4">
@@ -103,7 +117,7 @@ const Create = () => {
                 borderRadius: 8,
               }}
             >
-            <Text className="text-white">Low</Text>
+              <Text className="text-white">Low</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => setForm({ ...form, priority: 2 })}
@@ -129,6 +143,8 @@ const Create = () => {
             </TouchableOpacity>
           </View>
         </View>
+
+        {/* User Search */}
         <FormField
           title="Assign Users"
           value={searchQuery}
@@ -138,21 +154,31 @@ const Create = () => {
           otherStyles="mt-7"
         />
 
+        {/* Search Results */}
         <View className="mt-4">
           {searchResults.map((user) => (
             <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
-              <Text className="text-gray-100">{user.username}</Text>
+              <View className="bg-gray-800 p-4 rounded-lg mb-2 flex-row items-center justify-between">
+                <Text className="text-gray-100">{user.username}</Text>
+                <Text className="text-gray-400">Tap to Assign</Text>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
 
+        {/* Assigned Users List */}
         <View className="mt-4">
           {assignedUsers.map((user) => (
-            <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center">
+            <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center justify-between">
               <Text className="text-gray-800">{user.username}</Text>
+              <TouchableOpacity onPress={() => handleRemoveUser(user)}>
+                <Text className="text-red-600">Remove</Text>
+              </TouchableOpacity>
             </View>
           ))}
         </View>
+
+        {/* Due Date Picker */}
         <View className="mt-7 space-y-2">
           <Text className="text-base text-gray-100 font-pmedium">Due Date</Text>
           <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
@@ -184,4 +210,3 @@ const Create = () => {
 };
 
 export default Create;
-

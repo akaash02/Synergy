@@ -34,12 +34,25 @@ const CreateMeetings = () => {
   };
 
   const handleAssignUser = (user) => {
+    if (assignedUsers.some(assignedUser => assignedUser.accountId === user.accountId)) {
+          Alert.alert("User already assigned");
+          return;
+        }
+
     setForm((prevForm) => ({
       ...prevForm,
       attendees: [...prevForm.attendees, user.accountId], // Update attendees
     }));
   
     setAssignedUsers((prevUsers) => [...prevUsers, user]); // Add selected user to the list of assigned users
+  };
+
+  const handleRemoveUser = (userToRemove) => {
+    setAssignedUsers((prevUsers) => prevUsers.filter(user => user.accountId !== userToRemove.accountId)); // Remove the user from the list
+    setForm((prevForm) => ({
+      ...prevForm,
+      attendees: prevForm.attendees.filter(accountId => accountId !== userToRemove.accountId), // Remove the user's accountId from the assignees list
+    }));
   };
   
   
@@ -105,6 +118,9 @@ const CreateMeetings = () => {
             </View>
           </TouchableOpacity>
         </View>
+
+        {/* User Search */}
+
         <FormField
                   title="Assign Users"
                   value={searchQuery}
@@ -114,21 +130,30 @@ const CreateMeetings = () => {
                   otherStyles="mt-7"
                 />
         
-                <View className="mt-4">
-                  {searchResults.map((user) => (
-                    <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
-                      <Text className="text-gray-100">{user.username}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+              {/* Search Results */}
+                      <View className="mt-4">
+                        {searchResults.map((user) => (
+                          <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
+                            <View className="bg-gray-800 p-4 rounded-lg mb-2 flex-row items-center justify-between">
+                              <Text className="text-gray-100">{user.username}</Text>
+                              <Text className="text-gray-400">Tap to Assign</Text>
+                            </View>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
         
-                <View className="mt-4">
-                  {assignedUsers.map((user) => (
-                    <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center">
-                      <Text className="text-gray-800">{user.username}</Text>
-                    </View>
-                  ))}
-                </View>
+              {/* Assigned Users List */}
+                      <View className="mt-4">
+                        {assignedUsers.map((user) => (
+                          <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center justify-between">
+                            <Text className="text-gray-800">{user.username}</Text>
+                            <TouchableOpacity onPress={() => handleRemoveUser(user)}>
+                              <Text className="text-red-600">Remove</Text>
+                            </TouchableOpacity>
+                          </View>
+                        ))}
+                      </View>
+
         <DateTimePickerModal
           isVisible={isDatePickerVisible}
           mode="datetime"
