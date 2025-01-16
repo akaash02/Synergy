@@ -1,16 +1,38 @@
 import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Image, RefreshControl, Text, View } from "react-native";
+import { FlatList, Image, RefreshControl, Text, View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { images } from "../../constants";
 import useAppwrite from "../../lib/useAppwrite";
 import { getUsername, getIncompleteTasks } from "../../lib/appwrite";
-import { EmptyState, SearchInput, Trending, TaskCard, CustomButton } from "../../components";
+import { EmptyState, SearchInput, TaskCard, CustomButton } from "../../components";
+import * as Notifications from "expo-notifications";
 
 const Home = () => {
   const [username, setUsername] = useState('');
   const [tasks, setTasks] = useState([]); // State to store incomplete tasks
   const [refreshing, setRefreshing] = useState(false);
+
+  // Schedule a notification for a specific task
+  const scheduleNotification = async (task) => {
+    const dueDate = new Date(task.DueDate); // Convert dueDate string to Date object
+    const now = new Date();
+
+    // Check if dueDate is in the future
+    if (dueDate > now) {
+      const timeUntilDue = dueDate.getTime() - now.getTime();
+
+      // Schedule the notification
+      await Notifications.scheduleNotificationAsync({
+        content: {
+          title: "Task Reminder",
+          body: `Your task "${task.Title}" is due soon!`,
+          sound: true,
+        },
+        trigger: { seconds: Math.round(timeUntilDue / 1000) },
+      });
+    }
+  };
 
   // Fetch username and tasks
   const fetchData = async () => {
@@ -38,63 +60,117 @@ const Home = () => {
   };
 
   return (
-    <SafeAreaView className="bg-primary">
-      <FlatList
-        keyExtractor={(item) => item.$id}
-        data={tasks} // Pass tasks data to FlatList
-        renderItem={({ item }) => (
-          <TaskCard
-            title={item.Title || "Untitled Task"}
-            creator={item.Creator || "Unknown"}
-            description={item.Description || "No description available"}
-            dueDate={item.DueDate || "No due date"}
-            priority={item.Priority || 0}
-/>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        <FlatList
+          keyExtractor={(item) => item.$id}
+          data={tasks} // Pass tasks data to FlatList
+          renderItem={({ item }) => (
+            <TaskCard
+              title={item.Title || "Untitled Task"}
+              creator={item.Creator || "Unknown"}
+              description={item.Description || "No description available"}
+              dueDate={item.DueDate || "No due date"}
+              priority={item.Priority || 0}
+            />
+          )}
+          ListHeaderComponent={() => (
+            <View style={styles.header}>
+              <View style={styles.headerContent}>
+                <View>
+                  <Text style={styles.welcomeText}>Welcome Back</Text>
+                  <Text style={styles.usernameText}>
+                    {username ? username : 'Loading...'}
+                  </Text>
+                </View>
 
-        )}
-        ListHeaderComponent={() => (
-          <View className="flex- my-11 px-4 space-y-1">
-            <View className="flex justify-between items-start flex-row mb-6">
-              <View>
-                <Text className="font-pmedium text-sm text-gray-100">Welcome Back</Text>
-                <Text className="text-2xl font-psemibold text-white">
-                  {username ? username : 'Loading...'}
-                </Text>
+                <View>
+                  <Image
+                    source={images.logoSmall}
+                    style={styles.logo}
+                    resizeMode="contain"
+                  />
+                </View>
               </View>
 
-              <View className="mt-1.5">
-                <Image
-                  source={images.logoSmall}
-                  className="w-9 h-10"
-                  resizeMode="contain"
-                />
+              <SearchInput />
+
+              <View style={styles.tasksTitleContainer}>
+                <Text style={styles.tasksTitle}>Your Tasks</Text>
               </View>
             </View>
+          )}
+          ListEmptyComponent={() => (
+            <EmptyState
+              title="No pending tasks"
+              subtitle="Create a task to get started"
+            />
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      </View>
 
-            <SearchInput />
-
-            <View className="w-full flex-1 pt-5 pb-8">
-              <Text className="text-lg font-pregular text-gray-100 mb-3">Your Tasks</Text>
-            </View>
-          </View>
-        )}
-        ListEmptyComponent={() => (
-          <EmptyState
-            title="No pending tasks"
-            subtitle="Create a task to get started"
-          />
-        )}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
-      <CustomButton
-        title="Create a task"
-        handlePress={() => router.push("/create")}
-        containerStyles="w-full my-5"
-      />
+      <View style={styles.fixedButtonContainer}>
+        <CustomButton
+          title="Create a task"
+          handlePress={() => router.push("/create")}
+          containerStyles={styles.createTaskButton}
+        />
+      </View>
     </SafeAreaView>
   );
 };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#111', // Replace with your "bg-primary" equivalent
+  },
+  content: {
+    flex: 1,
+  },
+  header: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  welcomeText: {
+    fontSize: 14,
+    color: '#aaa', // Replace with "text-gray-100"
+  },
+  usernameText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#fff', // Replace with "text-white"
+  },
+  logo: {
+    width: 36,
+    height: 40,
+  },
+  tasksTitleContainer: {
+    marginTop: 20,
+  },
+  tasksTitle: {
+    fontSize: 18,
+    color: '#aaa', // Replace with "text-gray-100"
+    marginBottom: 8,
+  },
+  fixedButtonContainer: {
+    padding: 16,
+    backgroundColor: '#111', // Optional: matches your background color
+  },
+  createTaskButton: {
+    width: '100%',
+    paddingVertical: 10,
+  },
+});
+
 export default Home;
+
