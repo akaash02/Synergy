@@ -13,6 +13,7 @@ const Home = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   // Fetch username and tasks
+  
   const fetchData = async () => {
     const fetchedUsername = await getUsername(); // Get username
     if (fetchedUsername) {
