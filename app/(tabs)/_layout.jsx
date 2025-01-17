@@ -29,13 +29,13 @@ const TabsLayout = () => {
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#FFA001",
+          tabBarActiveTintColor: "#22d3ee",
           tabBarInactiveTintColor: "#CDCDE0",
           tabBarShowLabel: false,
           tabBarStyle: {
             backgroundColor: "#161622",
             borderTopWidth: 1,
-            borderTopColor: "#232533",
+            borderTopColor: "#082f49",
             height: 80,
           },
         }}
@@ -62,7 +62,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-              icon={icons.bookmark}
+              icon={icons.calendar}
               color={color}
               name="Meetings"
               focused={focused}
@@ -77,7 +77,7 @@ const TabsLayout = () => {
             headerShown: false,
             tabBarIcon: ({ color, focused }) => (
               <TabIcon
-              icon={icons.square}
+              icon={icons.tasks}
               color={color}
               name="Tasks"
               focused={focused}

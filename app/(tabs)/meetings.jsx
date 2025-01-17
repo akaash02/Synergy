@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView, Text, View, TouchableOpacity, Alert, Image, RefreshControl } from 'react-native';
+import { ScrollView, Text, View, TouchableOpacity, Alert, Image, RefreshControl , StyleSheet} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Calendar } from 'react-native-calendars';
 import { CustomButton } from '../../components';
@@ -35,7 +35,7 @@ const Meetings = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <View className="my-8 px-4">
-        <Text className="text-secondary text-xl font-psemibold mb-4">Calendar</Text>
+        <Text className="text-blue text-xl font-psemibold mb-4">Calendar</Text>
         <Calendar
           theme={{
             backgroundColor: 'transparent',
@@ -49,7 +49,7 @@ const Meetings = () => {
             textSectionTitleColor: 'white', // Day names (e.g., Sun, Mon, Tue)
             dayTextColor: 'white',         // Days on the calendar
             monthTextColor: 'white',       // Month name (e.g., January 2025)
-            textDisabledColor: '#a1a1a1',  // Disabled dates (optional)
+            textDisabledColor: '#082f49',  // Disabled dates (optional)
           }}
           style={{
             backgroundColor: 'transparent',
@@ -84,13 +84,27 @@ const Meetings = () => {
       </ScrollView>
 
       {/* Create Meeting Button */}
+      <View style={styles.fixedButtonContainer}>
       <CustomButton
         title="Create a Meeting"
         handlePress={() => router.push("/createMeeting")}
         containerStyles="w-full my-5"
       />
+      </View>
+      
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  fixedButtonContainer: {
+    padding: 16,
+    backgroundColor: '#111',
+  },
+  createTaskButton: {
+    width: '100%',
+    paddingVertical: 10,
+  },
+});
 
 export default Meetings;
