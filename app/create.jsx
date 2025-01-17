@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView, Text, View, TouchableOpacity, Alert } from "react-native";
+import { SafeAreaView, ScrollView, Text, View, TouchableOpacity, Alert, TextInput } from "react-native";
 import DateTimePickerModal from "react-native-modal-datetime-picker"; // Import the modal date-time picker
 import { CustomButton, FormField } from "../components";
 import { createTask, searchUsersByUsername } from "../lib/appwrite"; // Make sure to import the function
@@ -7,12 +7,16 @@ import { createTask, searchUsersByUsername } from "../lib/appwrite"; // Make sur
 const Create = () => {
   const [uploading, setUploading] = useState(false);
   const [assignedUsers, setAssignedUsers] = useState([]); // To store selected users
+  const [categories, setCategories] = useState([]); // To store existing categories
+  const [newCategory, setNewCategory] = useState(""); // For new category input
+  const [selectedCategory, setSelectedCategory] = useState(""); 
   const [form, setForm] = useState({
     title: "",
     description: "",
     priority: 1,
     dueDate: new Date(),
     assignees: [], // Array to store selected assignees' accountIds
+    category: "",
   });
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState(""); // For user search
@@ -58,16 +62,32 @@ const Create = () => {
     setDatePickerVisible(false); // Hide the date picker modal after selecting a date
   };
 
+  const handleAddCategory = () => {
+    if (!newCategory.trim()) {
+      Alert.alert("Please enter a category name");
+      return;
+    }
+    if (categories.includes(newCategory)) {
+      Alert.alert("Category already exists");
+      return;
+    }
+
+    setCategories([...categories, newCategory]);
+    setSelectedCategory(newCategory); // Automatically select the newly added category
+    setForm({ ...form, category: newCategory }); // Update the form with the new category
+    setNewCategory(""); // Clear the input field
+  };
+
   const handleCreateTask = async () => {
-    if (!form.title || !form.description) {
-      return Alert.alert("Please provide both title and description");
+    if (!form.title || !form.description || !form.category || !form.assignees) {
+      return Alert.alert("Please fill in missing fields");
     }
 
     setUploading(true);
 
     try {
       const dueDate = form.dueDate.toISOString();
-      await createTask(form.title, form.description, form.priority, dueDate, form.assignees);
+      await createTask(form.title, form.description, form.priority, dueDate, form.assignees, form.category);
       Alert.alert("Success", "Task created successfully!");
     } catch (error) {
       Alert.alert("Error", "An error occurred while creating the task.");
@@ -79,6 +99,7 @@ const Create = () => {
         priority: 1,
         dueDate: new Date(),
         assignees: [],
+        category: "",
       });
     }
   };
@@ -197,6 +218,42 @@ const Create = () => {
           onConfirm={handleDateConfirm}
           onCancel={() => setDatePickerVisible(false)}
         />
+
+         {/* Category Input */}
+        <FormField
+          title="New Category"
+          value={newCategory}
+          placeholder="Enter a new category"
+          handleChangeText={setNewCategory}
+          otherStyles="mt-7"
+        />
+        <CustomButton title="Add Category" handlePress={handleAddCategory} containerStyles="mt-4" />
+
+        {/* Category Dropdown */}
+        <View className="mt-7 space-y-2">
+          <Text className="text-base text-gray-100 font-pmedium">Select Category</Text>
+          <TouchableOpacity>
+            <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 flex justify-center">
+              <Text className="text-gray-100 font-pmedium">
+                {selectedCategory || "Select a category"}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          {categories.length > 0 &&
+            categories.map((category, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  setSelectedCategory(category);
+                  setForm({ ...form, category });
+                }}
+              >
+                <View className="bg-gray-800 p-4 rounded-lg mb-2">
+                  <Text className="text-gray-100">{category}</Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+        </View>
 
         <CustomButton
           title="Create Task"
