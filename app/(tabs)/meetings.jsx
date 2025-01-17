@@ -1,176 +1,119 @@
-import React, { useState } from 'react';
-import {  ScrollView, Text, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, Text, View, TouchableOpacity, Alert, Image, RefreshControl , StyleSheet} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { CustomButton, FormField } from '../components';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
-import { createMeeting, searchUsersByUsername } from '../lib/appwrite';
+import { Calendar } from 'react-native-calendars';
+import { CustomButton } from '../../components';
+import { router } from 'expo-router';
+import { getAllMeetings } from '../../lib/appwrite';
 
-const CreateMeetings = () => {
-  const [uploading, setUploading] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [assignedUsers, setAssignedUsers] = useState([]);
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    dueDate: new Date(),
-    attendees: [], // <-- Correct key for meetings
-  });
-  
-  const [isDatePickerVisible, setDatePickerVisible] = useState(false); // For showing/hiding the modal
+const Meetings = () => {
+  const [meetings, setMeetings] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      Alert.alert("Please enter a username to search");
-      return;
-    }
-  
+  // Fetch all meetings
+  const fetchMeetings = async () => {
     try {
-      const users = await searchUsersByUsername(searchQuery);
-      setSearchResults(users);
+      const meetingsData = await getAllMeetings();
+      setMeetings(meetingsData);
     } catch (error) {
-      Alert.alert("Error", error.message);
+      console.error('Error fetching meetings:', error);
     }
   };
 
-  const handleAssignUser = (user) => {
-    if (assignedUsers.some(assignedUser => assignedUser.accountId === user.accountId)) {
-          Alert.alert("User already assigned");
-          return;
-        }
-
-    setForm((prevForm) => ({
-      ...prevForm,
-      attendees: [...prevForm.attendees, user.accountId], // Update attendees
-    }));
-  
-    setAssignedUsers((prevUsers) => [...prevUsers, user]); // Add selected user to the list of assigned users
+  // Trigger refresh when user pulls to refresh
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchMeetings();
+    setRefreshing(false);
   };
 
-  const handleRemoveUser = (userToRemove) => {
-    setAssignedUsers((prevUsers) => prevUsers.filter(user => user.accountId !== userToRemove.accountId)); // Remove the user from the list
-    setForm((prevForm) => ({
-      ...prevForm,
-      attendees: prevForm.attendees.filter(accountId => accountId !== userToRemove.accountId), // Remove the user's accountId from the assignees list
-    }));
-  };
-  
-  
-  const handleDateConfirm = (date) => {
-    setForm({ ...form, dueDate: date });
-    setDatePickerVisible(false); // Hide the date picker modal after selecting a date
-  };
-
-  const handleCreateMeeting = async () => {
-    if (!form.title || !form.description) {
-      return Alert.alert("Please provide both title and description");
-    }
-  
-    setUploading(true);
-  
-    try {
-      const dueDate = form.dueDate.toISOString();
-      // Ensure you're passing attendees correctly
-      await createMeeting(form.title, form.description, dueDate, form.attendees); 
-  
-      Alert.alert("Success", "Meeting created successfully!");
-    } catch (error) {
-      Alert.alert("Error", "An error occurred while creating the meeting.");
-    } finally {
-      setUploading(false);
-      setForm({
-        title: "",
-        description: "",
-        dueDate: new Date(),
-        attendees: [],
-      });
-    }
-  };
-  
+  // Fetch meetings when the component loads
+  useEffect(() => {
+    fetchMeetings();
+  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-primary">
-      <ScrollView className="px-4 my-6 flex-1">
-        <Text className="text-2xl text-white font-psemibold">Create Meeting</Text>
-  
-        <FormField
-          title="Meeting Title"
-          value={form.title}
-          placeholder="Enter the meeting title"
-          handleChangeText={(e) => setForm({ ...form, title: e })}
-          otherStyles="mt-10"
+      <View className="my-8 px-4">
+        <Text className="text-white text-xl font-psemibold mb-4"></Text>
+        <Calendar
+          theme={{
+            backgroundColor: 'transparent',
+            calendarBackground: 'transparent',
+            todayTextColor: '#22d3ee',
+            selectedDayBackgroundColor: 'blue',
+            arrowColor: 'white',
+            textDayFontFamily: 'Poppins-Regular',
+            textMonthFontFamily: 'Poppins-SemiBold',
+            textDayHeaderFontFamily: 'Poppins-Medium',
+            textSectionTitleColor: 'white', // Day names (e.g., Sun, Mon, Tue)
+            dayTextColor: 'white',         // Days on the calendar
+            monthTextColor: 'white',       // Month name (e.g., January 2025)
+            textDisabledColor: '#000',  
+          }}
+          style={{
+            backgroundColor: 'transparent',
+          }}
         />
-  
-        <FormField
-          title="Description"
-          value={form.description}
-          placeholder="Enter the meeting description"
-          handleChangeText={(e) => setForm({ ...form, description: e })}
-          otherStyles="mt-7"
-        />
-        <View className="mt-7 space-y-2">
-          <Text className="text-base text-gray-100 font-pmedium">Due Date</Text>
-          <TouchableOpacity onPress={() => setDatePickerVisible(true)}>
-            <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 flex justify-center items-center">
-              <Text className="text-gray-100 font-pmedium">
-                {form.dueDate ? form.dueDate.toLocaleString() : "Select Date & Time"}
-              </Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+      </View>
 
-        {/* User Search */}
-
-        <FormField
-                  title="Assign Users"
-                  value={searchQuery}
-                  placeholder="Search users by username"
-                  handleChangeText={(e) => setSearchQuery(e)}
-                  onSubmitEditing={handleSearch}
-                  otherStyles="mt-7"
-                />
-        
-              {/* Search Results */}
-                      <View className="mt-4">
-                        {searchResults.map((user) => (
-                          <TouchableOpacity key={user.accountId} onPress={() => handleAssignUser(user)}>
-                            <View className="bg-gray-800 p-4 rounded-lg mb-2 flex-row items-center justify-between">
-                              <Text className="text-gray-100">{user.username}</Text>
-                              <Text className="text-gray-400">Tap to Assign</Text>
-                            </View>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-        
-              {/* Assigned Users List */}
-                      <View className="mt-4">
-                        {assignedUsers.map((user) => (
-                          <View key={user.accountId} className="bg-white p-3 rounded-lg mb-2 flex-row items-center justify-between">
-                            <Text className="text-gray-800">{user.username}</Text>
-                            <TouchableOpacity onPress={() => handleRemoveUser(user)}>
-                              <Text className="text-red-600">Remove</Text>
-                            </TouchableOpacity>
-                          </View>
-                        ))}
-                      </View>
-
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="datetime"
-          date={form.dueDate}
-          onConfirm={handleDateConfirm}
-          onCancel={() => setDatePickerVisible(false)}
-        />
-  
-        <CustomButton
-          title="Create Meeting"
-          handlePress={handleCreateMeeting}
-          containerStyles="mt-7"
-          isLoading={uploading}
-        />
+      {/* Meetings List */}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        className="flex-1"
+      >
+        {meetings.map((meeting) => (
+          <View key={meeting.$id} style={{ marginBottom: 16 }}>
+            <TouchableOpacity onPress={() => Alert.alert('Meeting Details', meeting.Title)}>
+              <View style={{ backgroundColor: '#222', padding: 16, borderRadius: 8 }}>
+                <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600' }}>
+                  {meeting.Title || 'Untitled Meeting'}
+                </Text>
+                <Text style={{ color: '#aaa', fontSize: 14 }}>
+                  {meeting.Description || 'No description available'}
+                </Text>
+                <Text style={{ color: '#fff', fontSize: 14, marginTop: 8 }}>
+                  {meeting.DueDate || 'No time set'}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        ))}
       </ScrollView>
+
+      {/* Create Meeting Button */}
+      <View style={styles.fixedButtonContainer}>
+      <CustomButton
+        title="Schedule Meeting"
+        handlePress={() => router.push("/createMeeting")}
+        containerStyles="w-full my-3"
+      />
+      </View>
+      <View style={styles.fixedButtonContainer}>
+      <CustomButton
+        title="View Meetings"
+        handlePress={() => router.push("/viewMeetings")}
+        containerStyles="w-full my-3"
+      />
+      </View>
     </SafeAreaView>
   );
 };
 
-export default CreateMeetings;
+
+const styles = StyleSheet.create({
+  fixedButtonContainer: {
+    padding: 16,
+    backgroundColor: 'transparent',
+  },
+  createTaskButton: {
+    width: '100%',
+    paddingVertical: 1,
+  },
+});
+
+
+
+export default Meetings;
