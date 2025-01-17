@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Synergy",
-    "scheme": "Synergy",
+    "scheme": "synergy",
     "slug": "Synergy",
     "version": "1.0.0",
     "orientation": "portrait",
