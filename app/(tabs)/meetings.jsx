@@ -86,15 +86,22 @@ const Meetings = () => {
       {/* Create Meeting Button */}
       <View style={styles.fixedButtonContainer}>
       <CustomButton
-        title="Create a Meeting"
+        title="Schedule Meeting"
         handlePress={() => router.push("/createMeeting")}
         containerStyles="w-full my-5"
       />
       </View>
-      
+      <View style={styles.fixedButtonContainer}>
+      <CustomButton
+        title="View Meetings"
+        handlePress={() => router.push("/viewMeetings")}
+        containerStyles="w-full my-5"
+      />
+      </View>
     </SafeAreaView>
   );
 };
+
 
 const styles = StyleSheet.create({
   fixedButtonContainer: {
@@ -107,4 +114,8 @@ const styles = StyleSheet.create({
   },
 });
 
+
+
 export default Meetings;
+
+

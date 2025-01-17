@@ -102,13 +102,15 @@ const Tasks = () => {
                   creator={item.Creator || "Unknown"}
                   description={item.Description || "No description available"}
                   dueDate={item.DueDate || "No due date"}
-                  priority={item.Priority || 0}
+                  priority={item.Priority || 0}   
+                  category={item.Category}             
                 />
                 {item.Completed && (
                   <View style={styles.completedBanner}>
                     <Text style={styles.completedText}>Completed</Text>
                   </View>
                 )}
+                
               </TouchableOpacity>
               {!item.Completed && (
                 <TouchableOpacity
