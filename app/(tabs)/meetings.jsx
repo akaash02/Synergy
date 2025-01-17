@@ -40,8 +40,13 @@ const Meetings = () => {
         )}
       </View>
       <CustomButton
-        title="Create a task"
+        title="Schedule Meeting"
         handlePress={() => router.push("/createMeeting")}
+        containerStyles="w-full my-5"
+      />
+      <CustomButton
+        title="View Meetings"
+        handlePress={() => router.push("/viewMeetings")}
         containerStyles="w-full my-5"
       />
     </SafeAreaView>
