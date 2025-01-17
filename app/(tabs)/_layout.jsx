@@ -66,6 +66,7 @@ const TabsLayout = () => {
               color={color}
               name="Meetings"
               focused={focused}
+              size={28}
             />
             )
           }}

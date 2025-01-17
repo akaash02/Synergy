@@ -83,15 +83,15 @@ const Home = () => {
                     {username ? username : 'Loading...'}
                   </Text>
                 </View>
-
                 <View>
                   <Image
-                    source={images.logoSmall}
+                    source={images.logo}
                     style={styles.logo}
                     resizeMode="contain"
                   />
                 </View>
-              </View>
+                </View>
+              
               <View style={styles.tasksTitleContainer}>
                 <Text style={styles.tasksTitle}>Your Tasks</Text>
               </View>
@@ -122,7 +122,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111",  },
+    backgroundColor: "#161622",  },
   content: {
     flex: 1,
   },
@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
   },
   fixedButtonContainer: {
     padding: 16,
-    backgroundColor: '#111',
+    backgroundColor: 'transparent',
   },
   createTaskButton: {
     width: '100%',

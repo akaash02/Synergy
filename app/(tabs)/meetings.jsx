@@ -35,13 +35,13 @@ const Meetings = () => {
   return (
     <SafeAreaView className="flex-1 bg-primary">
       <View className="my-8 px-4">
-        <Text className="text-blue text-xl font-psemibold mb-4">Calendar</Text>
+        <Text className="text-white text-xl font-psemibold mb-4"></Text>
         <Calendar
           theme={{
             backgroundColor: 'transparent',
             calendarBackground: 'transparent',
-            todayTextColor: '#FF9C01',
-            selectedDayBackgroundColor: '#FF9C01',
+            todayTextColor: '#22d3ee',
+            selectedDayBackgroundColor: 'blue',
             arrowColor: 'white',
             textDayFontFamily: 'Poppins-Regular',
             textMonthFontFamily: 'Poppins-SemiBold',
@@ -49,7 +49,7 @@ const Meetings = () => {
             textSectionTitleColor: 'white', // Day names (e.g., Sun, Mon, Tue)
             dayTextColor: 'white',         // Days on the calendar
             monthTextColor: 'white',       // Month name (e.g., January 2025)
-            textDisabledColor: '#082f49',  // Disabled dates (optional)
+            textDisabledColor: '#000',  
           }}
           style={{
             backgroundColor: 'transparent',
@@ -106,11 +106,11 @@ const Meetings = () => {
 const styles = StyleSheet.create({
   fixedButtonContainer: {
     padding: 16,
-    backgroundColor: '#111',
+    backgroundColor: 'transparent',
   },
   createTaskButton: {
     width: '100%',
-    paddingVertical: 10,
+    paddingVertical: 1,
   },
 });
 

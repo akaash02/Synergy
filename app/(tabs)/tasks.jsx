@@ -75,15 +75,11 @@ const Tasks = () => {
                       <View style={styles.headerContent}>
                         <View>
                           <Text style={styles.usernameText}>
-                          Your Tasks
+                        
                           </Text>
                         </View>
                         <View>
-                          <Image
-                            source={images.logoSmall}
-                            style={styles.logo}
-                            resizeMode="contain"
-                          />
+                         
                         </View>
                       </View>
 
@@ -139,7 +135,7 @@ const Tasks = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#111",
+    backgroundColor: "#161622",
   },
   content: {
     flex: 1,
