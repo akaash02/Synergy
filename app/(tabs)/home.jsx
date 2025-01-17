@@ -3,9 +3,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { FlatList, Image, RefreshControl, Text, View, StyleSheet } from "react-native";
 import { router } from "expo-router";
 import { images } from "../../constants";
-import useAppwrite from "../../lib/useAppwrite";
 import { getUsername, getIncompleteTasks } from "../../lib/appwrite";
-import { EmptyState, SearchInput, TaskCard, CustomButton } from "../../components";
+import { EmptyState, TaskCard, CustomButton } from "../../components";
 import { requestNotificationPermission, scheduleNotification } from "../Notifications";
 
 const Home = () => {
@@ -93,9 +92,6 @@ const Home = () => {
                   />
                 </View>
               </View>
-
-              <SearchInput />
-
               <View style={styles.tasksTitleContainer}>
                 <Text style={styles.tasksTitle}>Your Tasks</Text>
               </View>
@@ -112,7 +108,6 @@ const Home = () => {
           }
         />
       </View>
-
       <View style={styles.fixedButtonContainer}>
         <CustomButton
           title="Create a task"

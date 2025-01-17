@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlatList, Text, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
+import { FlatList, Text, View, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
 import { getAllTasks, markTaskAsCompleted, deleteTask } from "../../lib/appwrite";
 import { EmptyState, TaskCard } from "../../components";
+import { images } from "../../constants";
 
 const Tasks = () => {
   const [tasks, setTasks] = useState([]);
@@ -70,6 +71,23 @@ const Tasks = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+                    <View style={styles.header}>
+                      <View style={styles.headerContent}>
+                        <View>
+                          <Text style={styles.usernameText}>
+                          Your Tasks
+                          </Text>
+                        </View>
+                        <View>
+                          <Image
+                            source={images.logoSmall}
+                            style={styles.logo}
+                            resizeMode="contain"
+                          />
+                        </View>
+                      </View>
+
+                    </View>
         <FlatList
           keyExtractor={(item) => item.$id}
           data={tasks}
@@ -126,6 +144,29 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 16,
+  },
+  header: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  welcomeText: {
+    fontSize: 14,
+    color: '#aaa',
+  },
+  usernameText: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#fff',
+  },
+  logo: {
+    width: 36,
+    height: 40,
   },
   taskContainer: {
     marginBottom: 16,
