@@ -40,9 +40,9 @@ const ViewMeetings = () => {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#1a1a1a' }}>
       <View style={{ padding: 16 }}>
-        <Text style={{ color: '#FF9C01', fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Your Meetings</Text>
+        <Text style={{ color: '#22d3ee', fontSize: 24, fontWeight: 'bold', marginBottom: 16 }}>Your Meetings</Text>
         {loading ? (
-          <ActivityIndicator size="large" color="#FF9C01" />
+          <ActivityIndicator size="large" color="#22d3ee" />
         ) : meetings.length > 0 ? (
           <FlatList
             data={meetings}
