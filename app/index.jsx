@@ -38,7 +38,7 @@ const Welcome = () => {
             <Text className="text-3xl text-white font-bold text-center">
               Tagline 1{"\n"}
               Tagline 1 - part ii{" "}
-              <Text className="text-secondary-200">Synergy</Text>
+              <Text className="text-blue">Synergy</Text>
             </Text>
 
             <Image
@@ -60,7 +60,7 @@ const Welcome = () => {
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor="#161622" style="light" />
+      <StatusBar backgroundColor="#082f49" style="light" />
     </SafeAreaView>
   );
 };

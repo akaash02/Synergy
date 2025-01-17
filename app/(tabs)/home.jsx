@@ -122,8 +122,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#111',
-  },
+    backgroundColor: "#111",  },
   content: {
     flex: 1,
   },
@@ -139,12 +138,12 @@ const styles = StyleSheet.create({
   },
   welcomeText: {
     fontSize: 14,
-    color: '#aaa',
+    color: '#f0f9ff',
   },
   usernameText: {
     fontSize: 24,
     fontWeight: '600',
-    color: '#fff',
+    color: '#f0f9ff',
   },
   logo: {
     width: 36,
@@ -155,7 +154,7 @@ const styles = StyleSheet.create({
   },
   tasksTitle: {
     fontSize: 18,
-    color: '#aaa',
+    color: '#f0f9ff',
     marginBottom: 8,
   },
   fixedButtonContainer: {
