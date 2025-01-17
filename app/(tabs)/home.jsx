@@ -71,7 +71,6 @@ const Home = () => {
               description={item.Description || "No description available"}
               dueDate={item.DueDate || "No due date"}
               priority={item.Priority || 0}
-              category={item.Category}
             />
           )}
           ListHeaderComponent={() => (
@@ -83,15 +82,15 @@ const Home = () => {
                     {username ? username : 'Loading...'}
                   </Text>
                 </View>
+
                 <View>
                   <Image
-                    source={images.logo}
+                    source={images.logoSmall}
                     style={styles.logo}
                     resizeMode="contain"
                   />
                 </View>
-                </View>
-              
+              </View>
               <View style={styles.tasksTitleContainer}>
                 <Text style={styles.tasksTitle}>Your Tasks</Text>
               </View>
@@ -122,7 +121,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#161622",  },
+    backgroundColor: "#111",  },
   content: {
     flex: 1,
   },
@@ -159,7 +158,7 @@ const styles = StyleSheet.create({
   },
   fixedButtonContainer: {
     padding: 16,
-    backgroundColor: 'transparent',
+    backgroundColor: '#111',
   },
   createTaskButton: {
     width: '100%',
