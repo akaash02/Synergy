@@ -22,35 +22,25 @@ const Welcome = () => {
         }}
       >
         <View className="w-full flex justify-center items-center h-full px-4">
-          <Image
-            source={images.logo}
-            className="w-[130px] h-[84px]"
-            resizeMode="contain"
-          />
+          
 
           <Image
-            source={images.cards}
-            className="max-w-[380px] w-full h-[298px]"
+            source={images.logo}
+            className="max-w-[480px] w-full h-[380px]"
             resizeMode="contain"
           />
 
           <View className="relative mt-5">
             <Text className="text-3xl text-white font-bold text-center">
-              Tagline 1{"\n"}
-              Tagline 1 - part ii{" "}
-              <Text className="text-blue">Synergy</Text>
+              Streamline your work{"\n"}
+              {" "}
+              <Text className="text-blue-400">seamlessly</Text>
             </Text>
 
-            <Image
-              source={images.path}
-              className="w-[136px] h-[15px] absolute -bottom-2 -right-8"
-              resizeMode="contain"
-            />
+            
           </View>
 
-          <Text className="text-sm font-pregular text-gray-100 mt-7 text-center">
-            Tagline 2
-          </Text>
+          
 
           <CustomButton
             title="Continue with Email"
@@ -60,7 +50,7 @@ const Welcome = () => {
         </View>
       </ScrollView>
 
-      <StatusBar backgroundColor="#082f49" style="light" />
+      <StatusBar backgroundColor="#020617" style="light" />
     </SafeAreaView>
   );
 };
