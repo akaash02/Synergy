@@ -71,7 +71,6 @@ const Home = () => {
               description={item.Description || "No description available"}
               dueDate={item.DueDate || "No due date"}
               priority={item.Priority || 0}
-              category={item.Category}
             />
           )}
           ListHeaderComponent={() => (

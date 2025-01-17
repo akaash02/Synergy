@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from "react-native";
 
-const TaskCard = ({ title, creator, description, dueDate, priority, category }) => {
+const TaskCard = ({ title, creator, description, dueDate, priority }) => {
   // Determine background color based on priority
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -35,11 +35,6 @@ const TaskCard = ({ title, creator, description, dueDate, priority, category }) 
       {/* Due Date */}
       <Text className="text-sm text-gray-100 mb-2">
         Due on: {dueDate}
-      </Text>
-
-      {/* Category */}
-      <Text className="text-sm text-gray-100 mb-2">
-        Category: {category}
       </Text>
 
       {/* Priority */}

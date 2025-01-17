@@ -1,19 +1,5 @@
-import { StyleSheet, Text, View, Image, Button } from 'react-native'
+import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react'
-import { EmptyState, SearchInput, TaskCard, CustomButton } from "../../components";
-import { account, signOut } from "../../lib/appwrite";
-
-const handleLogout = async (navigation) => {
-  try {
-    const success = await signOut();
-    if (success) {
-      // Navigate to login page or splash screen
-      navigation.replace("/welcome"); // Replace "LoginPage" with your login screen route
-    }
-  } catch (error) {
-    alert("Failed to logout. Please try again.");
-  }
-};
 
 const Profile = () => {
   return (
@@ -22,13 +8,6 @@ const Profile = () => {
       <View style={styles.profilePicture}>
         <Text style={styles.initials}>Add Profile Picture</Text> {/* Placeholder for initials */}
       </View>
-
-      <CustomButton
-          title="Logout"
-          handlePress={() => handleLogout()}
-          containerStyles={styles.createTaskButton}
-          style={{ justifyContent: 'center' }}
-        />
     
     {/* Profile Name */}
     <Text style={styles.profileName}>Matthew Yeo</Text>
